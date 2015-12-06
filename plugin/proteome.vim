@@ -1,3 +1,3 @@
 augroup proteome
-  autocmd CursorHold,InsertEnter * call proteome#init()
+  autocmd VimEnter,CursorHold,InsertEnter * call proteome#init()
 augroup END
