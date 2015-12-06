@@ -1,4 +1,107 @@
-class CTags(object):
-    pass
+from proteome.project import Project
 
-__all__ = ['CTags']
+from fn import F  # type: ignore
+
+import asyncio
+from asyncio.subprocess import PIPE  # type: ignore
+
+from tryp import Map
+
+
+class CTagsResult(object):
+
+    def __init__(self, success, msg):
+        self.success = success
+        self.msg = msg
+
+    def __str__(self):
+        return ('ctags finished successfully'
+                if self.success
+                else 'ctags failed: {}'.format(self.msg))
+
+
+class CTagsJob(object):
+
+    def __init__(self, project: Project, status: asyncio.Future) -> None:
+        self.project = project
+        self.status = status
+
+    def finish(self, f):
+        err, msg = f.result()
+        self.status.set_result(CTagsResult(err == 0, msg))
+
+
+class CTagsExecutor(object):
+
+    def __init__(
+            self,
+            current: Map[Project, CTagsJob]=Map()
+    ) -> None:
+        self.current = current
+
+    # loop = pyuv.Loop.default_loop()
+
+    # @staticmethod
+    # def debug_stream(self, handle, data, error):
+    #     if error:
+    #         msg = pyuv.errno.strerror(error)
+    #         print('ctags error: {}'.format(msg))
+
+    # @classmethod
+    # def process(self, **kwargs) -> pyuv.Process:
+    #     proc = pyuv.Process(self.loop)
+    #     stream = pyuv.Pipe(self.loop)
+    #     pipe = pyuv.StdIO(stream, flags=pyuv.UV_CREATE_PIPE +
+    #                       pyuv.UV_WRITABLE_PIPE)
+    #     proc.spawn(
+    #         stdio=(pipe, pipe, pipe,),
+    #         **kwargs
+    #     )
+    #     stream.start_read(self.debug_stream)
+    #     return proc
+
+    @asyncio.coroutine
+    def process(self, project: Project):
+        langs = ','.join(project.langs)
+        tag_file = project.tag_file
+        args = [
+            '-R',
+            '--languages={}'.format(langs),
+            '-f',
+            str(tag_file),
+            str(project.root)
+        ]
+        return (yield from asyncio.create_subprocess_exec(
+            'ctags',
+            *args,
+            stdout=PIPE,
+            stderr=PIPE,
+            cwd=str(project.root),
+        ))
+
+    @asyncio.coroutine
+    def execute(self, project: Project):
+        if project.root.is_dir():
+            proc = yield from self.process(project)
+            yield from proc.wait()
+            err = yield from proc.stderr.readline()
+            return proc.returncode, err.decode()
+        else:
+            return 1, 'not a directory: {}'.format(project.root)
+
+    def run(self, project: Project):
+        ''' return values of execute are set as result of the task
+        returned by ensure_future(), obtainable via task.result()
+        '''
+        task = asyncio.ensure_future(self.execute(project))
+        job = CTagsJob(project, asyncio.Future())
+        task.add_done_callback(job.finish)
+        task.add_done_callback(F(self.job_done, job))
+        self.current[project] = job
+        return job
+
+    def job_done(self, job, status):
+        if job.project in self.current:
+            self.current.pop(job.project)
+
+__all__ = ['CTagsExecutor']
