@@ -1,6 +1,7 @@
 [
   {
     "name": "pypro1",
-    "type": "python"
+    "type": "python",
+    "langs": ["python"]
   }
 ]

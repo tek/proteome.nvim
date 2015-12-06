@@ -1,9 +1,12 @@
 from pathlib import Path
 import json
+import os
 
-from tryp import Maybe, Empty, Just, List, Map
+from tryp import Maybe, Empty, Just, List, Map, may
 
 from fn import _  # type: ignore
+
+from trypnv import Log
 
 
 class Project(object):
@@ -35,22 +38,22 @@ class Project(object):
 
 class Projects(object):
 
-    def __init__(self) -> None:
-        self.projects = Map()  # type: Map[str, Project]
+    def __init__(self, projects: Map[str, Project]=Map()) -> None:
+        self.projects = projects
 
-    def add(self, name: str, root: str) -> Maybe:
-        path = Path(root)
-        if path.is_dir():
-            self.projects[name] = Project(name, path)
-            return Empty()
+    def __add__(self, pro: Project) -> 'Projects':
+        return Projects(self.projects + (pro.name, pro))
+
+    def __pow__(self, pro: List[Project]) -> 'Projects':
+        pros = Map(pro.map(lambda a: (a.name, a,)))
+        return Projects(self.projects ** pros)
+
+    def show(self, names: List[str]=List()):
+        if names.isEmpty:
+            pros = self.projects.values
         else:
-            return Just('{} is not a directory'.format(root))
-
-    def show(self, name: str=None):
-        return self.projects.get(name) \
-            .map(list) \
-            .get_or_else(List.wrap(self.projects.values())) \
-            .map(_.info)
+            pros = names.flatMap(self.projects.get)
+        return pros.map(_.info)
 
     def project(self, name: str) -> Maybe[Project]:
         return self.projects.get(name)
@@ -58,6 +61,12 @@ class Projects(object):
     def ctags(self, pros: List):
         matching = pros.map(self.project).flatMap(_.toList)
         return matching
+
+    def __str__(self):
+        return '{}({})'.format(
+            self.__class__.__name__,
+            ','.join(map(repr, self.projects.values()))
+        )
 
 
 class Resolver(object):
@@ -80,12 +89,16 @@ class ProjectLoader(object):
     def _load_config(self) -> List[Map]:
         def parse(path: Path):
             with path.open() as f:
-                return List.wrap(map(lambda a: Map(**a), json.load(f)))
+                try:
+                    return List.wrap(map(Map, json.loads(f.read())))
+                except Exception as e:
+                    Log.error('parse error in {}: {}'.format(path, e))
+                    return List()
         if (self.config_path.is_dir()):
             return List.wrap(self.config_path.glob('*.json')) \
                 .flatMap(parse)
         else:
-            return List()
+            return parse(self.config_path)
 
     def resolve(self, tpe: str, name: str):
         return self.resolver.type_name(tpe, name) \
@@ -97,15 +110,21 @@ class ProjectLoader(object):
 
     def by_name(self, name: str):
         return self.json_by_name(name)\
-            .flatMap(self.from_json)
+            .flatMap(self._from_json)
 
-    def from_json(self, json: Map):
+    def _from_json(self, json: Map) -> Maybe[Project]:
         def from_type(tpe: str, name: str):
             root = json.get('root') \
-                .or_else(self.resolver.type_name(tpe, name))
+                .map(os.path.expanduser)\
+                .get_or_else(self.resolver.type_name(tpe, name))
             return Project(name, root, Just(tpe))
         return json.get('type') \
             .zip(json.get('name')) \
             .smap(from_type)
+
+    @may
+    def create(self, name: str, root: Path, **kw):
+        if root.is_dir():
+            return Project(name, root, **kw)
 
 __all__ = ['Projects', 'Project', 'ProjectLoader', 'Resolver']

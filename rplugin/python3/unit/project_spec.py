@@ -1,51 +1,35 @@
-from pathlib import Path
-
 import sure  # NOQA
 from flexmock import flexmock  # NOQA
 
 from fn import _  # type: ignore
 
 from tek import Spec  # type: ignore
-from tek.test import temp_dir, fixture_path  # type: ignore
+from tek.test import temp_dir  # type: ignore
 
-from tryp import List, Map, Just
+from tryp import Just, List
 
 from proteome import Projects
-from proteome.project import ProjectLoader, Resolver
+from proteome.project import Project
+
+from unit._support.loader import _LoaderSpec
 
 
-class Projects_(Spec, ):
+class Projects_(_LoaderSpec, ):
 
     def setup(self, *a, **kw):
         super(Projects_, self).setup(*a, **kw)
 
-    def valid_path(self):
-        p = Projects()
-        d = temp_dir('project1')
-        err = p.add('some', d)
-        err.isJust.should_not.be.ok
-        pro = list(p.projects.values())[0]
-        str(pro.root).should.equal(d)
-
-    def invalid_path(self):
-        p = Projects()
-        err = p.add('name', '/tmp/invalidpath')
-        err.isJust.should.be.ok
+    def show(self):
+        n = 'some name'
+        d = '/dir/to/project'
+        p2 = Projects() + Project(n, d)
+        p2.show().should.equal(List('{}: {}'.format(n, d)))
 
 
-class ProjectLoader_(Spec, ):
+class ProjectLoader_(_LoaderSpec):
 
     def setup(self, *a, **kw):
         super(ProjectLoader_, self).setup(*a, **kw)
-        self.name = 'pypro1'
-        self.config = Path(fixture_path('conf'))
-        self.project_base = Path(fixture_path('projects'))
-        self.pypro1_type = 'python'
-        self.pypro1_root = self.project_base / self.pypro1_type / self.name
-        self.type1_base = Path(fixture_path('type1_projects'))
-        self.res = Resolver(List(self.project_base),
-                            Map(type1=self.type1_base))
-        self.loader = ProjectLoader(self.config, self.res)
 
     def resolve(self):
         self.loader \
@@ -64,8 +48,11 @@ class ProjectLoader_(Spec, ):
             .should.equal(Just(self.pypro1_type))
 
     def from_file(self):
-        pro = self.loader.by_name(self.name)
-        pro.map(_.name).should.equal(Just(self.name))
-        pro.flatMap(_.tpe).should.equal(Just(self.pypro1_type))
+        pj = self.loader.by_name(self.name)
+        pj.should.be.a(Just)
+        pro = pj._get
+        pro.should.be.a(Project)
+        pro.name.should.equal(self.name)
+        pro.tpe.should.equal(Just(self.pypro1_type))
 
-__all__ = ['Projects_']
+__all__ = ['Projects_', 'ProjectLoader_']
