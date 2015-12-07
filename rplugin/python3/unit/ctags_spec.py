@@ -13,7 +13,7 @@ from unit._support.async import test_loop
 from tek.test import temp_path
 
 
-class CTagsExecutor_(_LoaderSpec, ):
+class CTagsExecutor_(_LoaderSpec):
 
     def run(self):
         with test_loop() as loop:

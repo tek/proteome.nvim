@@ -1,13 +1,29 @@
 import sure  # NOQA
 from flexmock import flexmock  # NOQA
 
+import neovim  # type: ignore
+from neovim.msgpack_rpc.event_loop.asyncio import AsyncioEventLoop
+from neovim.msgpack_rpc.msgpack_stream import MsgpackStream
+from neovim.msgpack_rpc.session import Session
+from neovim.msgpack_rpc.async_session import AsyncSession
+
 from proteome import Proteome, List
 
-from tek import Spec  # type: ignore
+from unit._support.loader import _LoaderSpec
+
 from tek.test import temp_dir  # type: ignore
 
 
-class Proteome_(Spec, ):
+def start_nvim():
+    loop = AsyncioEventLoop('child', ['/bin/env', 'nvim', '--headless',
+                                      '--embed'])
+    msgpack_stream = MsgpackStream(loop)
+    async_session = AsyncSession(msgpack_stream)
+    session = Session(async_session)
+    return neovim.Nvim.from_session(session)
+
+
+class Proteome_(_LoaderSpec, ):
 
     def setup(self, *a, **kw):
         super(Proteome_, self).setup(*a, **kw)
@@ -21,4 +37,13 @@ class Proteome_(Spec, ):
         pro = list(p.projects.projects.values())[0]
         pro.name.should.equal(data[0])
 
-__all__ = ['Proteome_']
+
+class ProteomePlugin_(_LoaderSpec):
+
+    def setup(self):
+        self.vim = start_nvim()
+
+    def foo(self):
+        self.vim.command('let foo = 1')
+
+__all__ = ['Proteome_', 'ProteomePlugin_']

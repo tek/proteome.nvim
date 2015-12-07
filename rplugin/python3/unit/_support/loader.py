@@ -1,11 +1,12 @@
 from pathlib import Path
 
-from tek import Spec  # type: ignore
-from tek.test import fixture_path, temp_dir  # type: ignore
+from tek.test import fixture_path  # type: ignore
 
 from tryp import List, Map
 
 from proteome.project import Resolver, ProjectLoader
+
+from unit._support.spec import Spec
 
 
 class _LoaderSpec(Spec):

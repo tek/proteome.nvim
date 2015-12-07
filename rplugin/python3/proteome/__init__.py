@@ -1,88 +1,120 @@
 from pathlib import Path  # type: ignore
+from functools import reduce  # type: ignore
+import importlib
 
 import neovim  # type: ignore
 
-from tryp import Empty, List, Map
+from tryp import List, may
 
-from trypnv import command, NvimPlugin
+from trypnv import command, NvimStatePlugin, Log, msg_command
 
-from proteome.project import Projects, Resolver, ProjectLoader, Project
 from proteome.nvim import NvimFacade
+from proteome.env import Env
+from proteome.state import ProteomeState
+from proteome.plugins.core import (AddByName, Show, Create, SwitchRoot, Next,
+                                   Prev)
+from proteome.project import Projects
 
-from trypnv import Log
 
-
-class Proteome(object):
+class Proteome(ProteomeState):
 
     def __init__(
             self,
-            vim: neovim.Nvim,
+            vim: NvimFacade,
             config_path: Path,
+            plugins: List[str],
             bases: List[Path]
     ) -> None:
-        self.vim = vim
-        self.projects = Projects()
-        self._resolver = Resolver(bases, Map())
-        self._loader = ProjectLoader(config_path, self._resolver)
-        self._current_index = Empty()
+        self._config_path = config_path
+        self._bases = bases
+        core = 'proteome.plugins.core'
+        super(Proteome, self).__init__(vim)
+        self.plugins = (plugins + [core]).flat_map(self.start_plugin)
 
-    def add(self, pro: Project):
-        self.projects = self.projects + pro
+    @may
+    def start_plugin(self, name: str):
+        try:
+            mod = importlib.import_module(name)
+        except ImportError as e:
+            msg = 'invalid proteome plugin module "{}": {}'.format(name, e)
+            Log.error(msg)
+        else:
+            if hasattr(mod, 'Plugin'):
+                return getattr(mod, 'Plugin')(self.vim)
 
-    def create(self, name: str, root: str):
-        self.add(Project(name, Path(root)))
+    def init(self):
+        return Env(
+            config_path=self._config_path,
+            bases=self._bases,
+            projects=Projects()
+        )
 
-    def add_by_name(self, name: str):
-        self._loader.by_name(name)\
-            .foreach(self.add)
+    @property
+    def projects(self):
+        return self.env.projects
 
-    def show(self, names: List[str]):
-        lines = self.projects.show(names)
-        header = List('Projects:')  # type: List[str]
-        return '\n'.join(header + lines)
-
-    def ctags(self, names: List[str]):
-        pass
-
-    def switch_root(self, name: str):
-        self.projects.project(name)\
-            .map(lambda a: a.root)\
-            .foreach(self.vim.switch_root)
+    @may
+    def unhandled(self, env, msg):
+        return reduce(lambda e, plug: plug.process(e, msg), self.plugins, env)
 
 
 @neovim.plugin
-class ProteomePlugin(NvimPlugin):
+class ProteomePlugin(NvimStatePlugin):
 
     def __init__(self, vim: neovim.Nvim) -> None:
         super(ProteomePlugin, self).__init__(NvimFacade(vim))
+        self.pro = None  # type: Proteome
 
-    @neovim.command('ProteomeInit', sync=True, nargs=0)
-    def proteome_init(self):
+    def state(self):
+        return self.pro
+
+    @neovim.command('ProteomeReload', nargs=0)
+    def proteome_reload(self):
+        self.proteome_quit()
+        self.proteome_start()
+
+    @command()
+    def proteome_quit(self):
+        if self.pro is not None:
+            self.vim.clean()
+            self.pro = None
+
+    @command()
+    def proteome_start(self):
         config_path = self.vim.ps('config_path')\
             .get_or_else('/dev/null')
         bases = self.vim.pl('base_dirs')\
             .get_or_else(List())
-        self.pro = Proteome(self.vim, Path(config_path), bases)
+        plugins = self.vim.pl('plugins') | List()
+        self.pro = Proteome(self.vim, Path(config_path), plugins, bases)
         self.vim.vim.call('ptplugin#runtime_after')
 
-    @command()
-    def pro_create(self, name, root):
-        self.pro.create(name, root)
+    @msg_command(Create)
+    def pro_create(self):
+        pass
 
-    @command()
+    @msg_command(AddByName)
     def pro_add(self, name: str):
-        self.pro.add_by_name(name)
+        self.pro.send(AddByName(name))
 
-    @command(sync=True)
-    def pro_show(self, *names):
-        Log.info(self.pro.show(List.wrap(names)))
-
-    @command()
-    def pro_c_tags(self, *names):
-        self.pro.ctags(List.wrap(names))
+    @msg_command(Show, sync=True)
+    def pro_show(self):
+        pass
 
     @command()
-    def pro_to(self, name: str):
-        self.pro.switch_root(name)
+    def pro_ctags(self, *names):
+        pass
+
+    @msg_command(SwitchRoot)
+    def pro_to(self):
+        pass
+
+    @msg_command(Next)
+    def pro_next(self):
+        pass
+
+    @msg_command(Prev)
+    def pro_prev(self):
+        pass
 
 __all__ = ['ProteomePlugin', 'Proteome']

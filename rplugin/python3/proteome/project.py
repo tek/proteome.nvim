@@ -35,38 +35,54 @@ class Project(object):
     def __repr__(self):
         return '{}({})'.format(self.__class__.__name__, repr(self.name))
 
+    def ctags(self, arg1):
+        pass
+
+    @property
+    def tag_file(self):
+        return self.root / '.tags'
+
+    def remove_tag_file(self):
+        if self.tag_file.exists():
+            self.tag_file.unlink()
+
 
 class Projects(object):
 
-    def __init__(self, projects: Map[str, Project]=Map()) -> None:
+    def __init__(self, projects: List[Project]=List()) -> None:
         self.projects = projects
 
     def __add__(self, pro: Project) -> 'Projects':
-        return Projects(self.projects + (pro.name, pro))
+        return Projects(self.projects + [pro])
 
-    def __pow__(self, pro: List[Project]) -> 'Projects':
-        pros = Map(pro.map(lambda a: (a.name, a,)))
-        return Projects(self.projects ** pros)
+    def __pow__(self, pros: List[Project]) -> 'Projects':
+        return Projects(self.projects + pros)
 
     def show(self, names: List[str]=List()):
-        if names.isEmpty:
-            pros = self.projects.values
+        if names.is_empty:
+            pros = self.projects
         else:
-            pros = names.flatMap(self.projects.get)
+            pros = names.flat_map(self.project)
         return pros.map(_.info)
 
     def project(self, name: str) -> Maybe[Project]:
-        return self.projects.get(name)
+        return self.projects.find(_.name == name)
 
-    def ctags(self, pros: List):
-        matching = pros.map(self.project).flatMap(_.toList)
+    def ctags(self, names: List[str]):
+        matching = names.flat_map(self.project)
         return matching
 
     def __str__(self):
         return '{}({})'.format(
             self.__class__.__name__,
-            ','.join(map(repr, self.projects.values()))
+            ','.join(map(repr, self.projects))
         )
+
+    def __getitem__(self, index):
+        return self.projects.lift(index)
+
+    def __len__(self):
+        return len(self.projects)
 
 
 class Resolver(object):
@@ -96,7 +112,7 @@ class ProjectLoader(object):
                     return List()
         if (self.config_path.is_dir()):
             return List.wrap(self.config_path.glob('*.json')) \
-                .flatMap(parse)
+                .flat_map(parse)
         else:
             return parse(self.config_path)
 
@@ -110,7 +126,7 @@ class ProjectLoader(object):
 
     def by_name(self, name: str):
         return self.json_by_name(name)\
-            .flatMap(self._from_json)
+            .flat_map(self._from_json)
 
     def _from_json(self, json: Map) -> Maybe[Project]:
         def from_type(tpe: str, name: str):
