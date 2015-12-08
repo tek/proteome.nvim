@@ -1,2 +1,1 @@
-tryp-nvim
-pyrsistent
+proteome
