@@ -1,8 +1,8 @@
 import neovim  # type: ignore
 
-from proteome import ProteomePlugin
+from proteome.nvim_plugin import ProteomeNvimPlugin
 
 
 @neovim.plugin
-class Plugin(ProteomePlugin):
+class Plugin(ProteomeNvimPlugin):
     pass
