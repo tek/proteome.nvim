@@ -4,6 +4,8 @@ import importlib
 
 import neovim  # type: ignore
 
+from fn import _  # type: ignore
+
 from tryp import List, may
 
 from trypnv import command, NvimStatePlugin, Log, msg_command
@@ -32,15 +34,16 @@ class Proteome(ProteomeState):
         self.plugins = (plugins + [core]).flat_map(self.start_plugin)
 
     @may
-    def start_plugin(self, name: str):
+    def start_plugin(self, path: str):
         try:
-            mod = importlib.import_module(name)
+            mod = importlib.import_module(path)
         except ImportError as e:
-            msg = 'invalid proteome plugin module "{}": {}'.format(name, e)
+            msg = 'invalid proteome plugin module "{}": {}'.format(path, e)
             Log.error(msg)
         else:
             if hasattr(mod, 'Plugin'):
-                return getattr(mod, 'Plugin')(self.vim)
+                name = path.split('.')[-1]
+                return getattr(mod, 'Plugin')(name, self.vim)
 
     def init(self):
         return Env(
@@ -56,6 +59,17 @@ class Proteome(ProteomeState):
     @may
     def unhandled(self, env, msg):
         return reduce(lambda e, plug: plug.process(e, msg), self.plugins, env)
+
+    def plugin(self, name):
+        return self.plugins.find(_.name == name)
+
+    def plug_command(self, plug_name: str, cmd_name: str, args: list):
+        plug = self.plugin(plug_name)
+        plug.zip(plug.map(lambda a: a.command(cmd_name, List(args))))\
+            .smap(self.send_plug_command)
+
+    def send_plug_command(self, plug, msg):
+        self._data = plug.process(self._data, msg)
 
 
 @neovim.plugin
@@ -89,20 +103,20 @@ class ProteomePlugin(NvimStatePlugin):
         self.pro = Proteome(self.vim, Path(config_path), plugins, bases)
         self.vim.vim.call('ptplugin#runtime_after')
 
+    @command()
+    def pro_plug(self, plug_name, cmd_name, *args):
+        self.pro.plug_command(plug_name, cmd_name, args)
+
     @msg_command(Create)
     def pro_create(self):
         pass
 
     @msg_command(AddByName)
-    def pro_add(self, name: str):
-        self.pro.send(AddByName(name))
+    def pro_add(self):
+        pass
 
     @msg_command(Show, sync=True)
     def pro_show(self):
-        pass
-
-    @command()
-    def pro_ctags(self, *names):
         pass
 
     @msg_command(SwitchRoot)

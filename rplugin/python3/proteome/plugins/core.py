@@ -1,5 +1,4 @@
 from pathlib import Path  # type: ignore
-from collections import namedtuple  # type: ignore
 
 from tryp import List
 

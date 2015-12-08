@@ -37,4 +37,25 @@ class Proteome_(MockNvimSpec):
         prot.send(Prev())
         prot._data.current.should.equal(Just(pros[0]))
 
+    def command(self):
+        class P(Proteome):
+            def init(self):
+                return dict()
+        plug = 'unit._support.test_plug'
+        prot = P(self.vim, Path('/dev/null'), List(plug), List())
+        data = 'message_data'
+        prot.plug_command('test_plug', 'do', [data])
+        prot._data.should.have.key(data).being.equal(data)
+
+    def invalid_command(self):
+        class P(Proteome):
+            def init(self):
+                return dict()
+        plug = 'unit._support.test_plug'
+        prot = P(self.vim, Path('/dev/null'), List(plug), List())
+        data = 'message_data'
+        prot.plug_command('test_plug', 'do', [data])
+        prot.plug_command('test_plug', 'dont', [data])
+        prot._data.should.have.key(data).being.equal(data)
+
 __all__ = ['Proteome_']
