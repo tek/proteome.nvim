@@ -7,14 +7,10 @@ from neovim.msgpack_rpc.msgpack_stream import MsgpackStream
 from neovim.msgpack_rpc.session import Session
 from neovim.msgpack_rpc.async_session import AsyncSession
 
-from proteome import Proteome, List
-
 from unit._support.loader import _LoaderSpec
 
-from tek.test import temp_dir  # type: ignore
 
-
-def start_nvim():
+def _start_nvim():
     loop = AsyncioEventLoop('child', ['/bin/env', 'nvim', '--headless',
                                       '--embed'])
     msgpack_stream = MsgpackStream(loop)
@@ -23,27 +19,12 @@ def start_nvim():
     return neovim.Nvim.from_session(session)
 
 
-class Proteome_(_LoaderSpec, ):
-
-    def setup(self, *a, **kw):
-        super(Proteome_, self).setup(*a, **kw)
-
-    def add_project(self):
-        p = Proteome()
-        d = temp_dir('project1')
-        data = List('some', d)
-        p._add_root(data)
-        p.projects.projects.should.have.length_of(1)
-        pro = list(p.projects.projects.values())[0]
-        pro.name.should.equal(data[0])
-
-
 class ProteomePlugin_(_LoaderSpec):
 
     def setup(self):
-        self.vim = start_nvim()
+        self.vim = _start_nvim()
 
-    def foo(self):
+    def _foo(self):
         self.vim.command('let foo = 1')
 
-__all__ = ['Proteome_', 'ProteomePlugin_']
+__all__ = ['ProteomePlugin_']

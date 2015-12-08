@@ -39,27 +39,6 @@ class CTagsExecutor(object):
     ) -> None:
         self.current = current
 
-    # loop = pyuv.Loop.default_loop()
-
-    # @staticmethod
-    # def debug_stream(self, handle, data, error):
-    #     if error:
-    #         msg = pyuv.errno.strerror(error)
-    #         print('ctags error: {}'.format(msg))
-
-    # @classmethod
-    # def process(self, **kwargs) -> pyuv.Process:
-    #     proc = pyuv.Process(self.loop)
-    #     stream = pyuv.Pipe(self.loop)
-    #     pipe = pyuv.StdIO(stream, flags=pyuv.UV_CREATE_PIPE +
-    #                       pyuv.UV_WRITABLE_PIPE)
-    #     proc.spawn(
-    #         stdio=(pipe, pipe, pipe,),
-    #         **kwargs
-    #     )
-    #     stream.start_read(self.debug_stream)
-    #     return proc
-
     @asyncio.coroutine
     def process(self, project: Project):
         langs = ','.join(project.langs)

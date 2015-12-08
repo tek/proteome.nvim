@@ -16,7 +16,7 @@ Create = message('Create', 'name', 'root')
 Next = message('Next')
 Prev = message('Prev')
 SetRoot = message('SetRoot')
-SwitchRoot = message('SwitchRoot')
+SwitchRoot = message('SwitchRoot', 'name')
 
 
 class Show(Message):
