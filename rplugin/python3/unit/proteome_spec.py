@@ -7,12 +7,14 @@ from proteome import Proteome, Create, Projects
 from proteome.project import Project
 from proteome.plugins.core import Next, Prev
 
-from tryp import List, Just
+from tryp import List, Just, _
 
 from unit._support.spec import MockNvimSpec
+from unit._support.loader import _LoaderSpec
+from unit._support.async import test_loop
 
 
-class Proteome_(MockNvimSpec):
+class Proteome_(MockNvimSpec, _LoaderSpec):
 
     def create(self):
         name = 'proj'
@@ -57,5 +59,24 @@ class Proteome_(MockNvimSpec):
         prot.plug_command('test_plug', 'do', [data])
         prot.plug_command('test_plug', 'dont', [data])
         prot._data.should.have.key(data).being.equal(data)
+
+    def ctags(self):
+        plug_name = 'proteome.plugins.ctags'
+        p1 = self.mk_project('pro1', 'c')
+        p2 = self.mk_project('pro2', 'go')
+        prot = Proteome(self.vim, Path('/dev/null'), List(plug_name), List())
+        plug = prot.plugin('ctags')._get
+        pros = List(p1, p2)
+        prot._data = prot._data.set(projects=Projects(pros))
+        p1.tag_file.exists().should_not.be.ok
+        p2.tag_file.exists().should_not.be.ok
+        with test_loop() as loop:
+            prot.plug_command('ctags', 'gen', List())
+            plug.ctags.current.values\
+                .map(_.status)\
+                .foreach(loop.run_until_complete)
+        plug.ctags.current.keys.should.be.empty
+        p1.tag_file.exists().should.be.ok
+        p2.tag_file.exists().should.be.ok
 
 __all__ = ['Proteome_']

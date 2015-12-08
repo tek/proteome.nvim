@@ -35,8 +35,13 @@ class Project(object):
     def __repr__(self):
         return '{}({})'.format(self.__class__.__name__, repr(self.name))
 
-    def ctags(self, arg1):
-        pass
+    @property
+    def ctags_langs(self):
+        return self.langs + self.tpe.toList
+
+    @property
+    def want_ctags(self):
+        return not self.ctags_langs.is_empty
 
     @property
     def tag_file(self):
