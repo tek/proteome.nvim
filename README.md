@@ -11,6 +11,9 @@ project containing the main code, which must be installed on your pythonpath:
 pip install proteome
 ```
 
+Python 3.5.1 is required to run the plugin. After installation, regularly
+install the nvim plugin and execute `UpdateRemotePlugins`.
+
 # General functionality
 The core concept is the management of the current project, its dependencies on
 the local file system and their project types.
