@@ -12,7 +12,7 @@ pip install proteome
 ```
 
 Python 3.5.1 is required to run the plugin. After installation, regularly
-install the nvim plugin and execute `UpdateRemotePlugins`.
+install the nvim plugin and execute `:UpdateRemotePlugins`.
 
 # General functionality
 The core concept is the management of the current project, its dependencies on
@@ -30,7 +30,7 @@ functions, generally the project's main language.
 Optionally, a json object can be passed to configure the project's parameters.
 
 #### Examples
-`Pro Add python/proteome`
+`ProAdd python/proteome`
 
 Tries to look up the project `proteome` of type `python`, first in the json
 config, then the type indexed base dirs and finally the explicitly typed dirs
