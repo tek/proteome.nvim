@@ -138,7 +138,7 @@ adds the `.tags` file in each project root to the `tags` option.
 The languages used when scanning are the main project type and the optional
 `langs` list parameter.
 
-## history
+## History
 
 ```vim
 let g:proteome_history_base = '~/tmp/nvim_history'
@@ -149,3 +149,9 @@ Creates bare git repositories for each project at
 state is commited every time `ProSave` is executed.
 This provides a separate persistant undo history with git comfort without using
 the project's regular git repository.
+
+## License
+
+Copyright (c) Torsten Schmits. Distributed under the terms of the [MIT License][4].
+
+[4]: http://opensource.org/licenses/MIT 'mit license'
