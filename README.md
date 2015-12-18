@@ -3,6 +3,9 @@ instance, allowing to change the current working directory according to a
 defined set of projects, and providing additional functionality like project
 specific configuration, ctags handling and a git history.
 
+**Note**: the plugin heavily uses concurrency and isn't completely deadlock
+safe yet.
+
 # Setup
 This repository is only a neovim remote plugin wrapper for the python
 project containing the main code, which must be installed on your pythonpath:
@@ -19,15 +22,45 @@ The core concept is the management of the current project, its dependencies on
 the local file system and their project types.
 The most basic property being manipulated is the working dir, which can be switched
 to one of the projects in the set.
+The main project is always present, additional ones can be added either during
+startup or dynamically at runtime.
+
+### Startup
+The regular initialization flow is:
+
+* Proteome starts during the `after/plugin/` vim phase.
+
+* The main project is determined (see [Main Project](#main-project)).
+
+* Based on the result of that, project specific config is loaded (see [Config
+  Plugin](#config)). This is where additional projects should be added.
+
+* The project specific config is applied and the initial state is created.
+
+* The *after* part of the project config is loaded.
+
+* In the final initialization phase, plugins perform finishing tasks.
+
+### Commands
 
 Projects can be configured in several ways, explained below, and added with the
-`ProAdd` command. The `ProNext` and `ProPrev` commands allow cycling through
-the set of projects, changing `cwd` to the currently active project's root.
+`ProAdd` command.
 
 The argument to `ProAdd` must be an identifier in the shape of either
 `type/name` or `name`, where `type` is an optional identifier used for several
 functions, generally the project's main language.
 Optionally, a json object can be passed to configure the project's parameters.
+
+The `ProNext` and `ProPrev` commands allow cycling through
+the set of projects, changing `cwd` to the currently active project's root.
+
+The `ProSave` command is intended to be executed with `:wall`, depending on the
+user's workflow, as the plugins perform several tasks that rely on that.
+If you have a 'save all' mapping, you should combine it with this.
+
+`ProShow` prints a short overview of added projects.
+
+`ProTo` activates a project, either by index or by name.
 
 #### Examples
 `ProAdd python/proteome`
@@ -40,12 +73,6 @@ config, then the type indexed base dirs and finally the explicitly typed dirs
 
 Adds the project `mysite` of type `rails`, if the root dir exists, with
 additional project types `jade` and `ruby` (see the `config` plugin).
-
-
-The `ProSave` command is intended to be executed with `:wall`, depending on the
-user's workflow, as the plugins perform several tasks that rely on that.
-If you have a 'save all' mapping, you should combine it with this.
-
 
 # Configuration
 General config options that should be set:
@@ -63,6 +90,7 @@ let g:proteome_plugins = [
 
 ### Project base dirs
 There are two kinds of base directory where proteome looks up a project identifier:
+
 #### Type indexed
 In type indexed directories, matching projects are located at the path
 `basedir/type/name`.
@@ -102,6 +130,18 @@ The config file format is a list of json objects like so:
 ]
 ```
 
+### Main Project
+During startup, the principal project that's being worked is determined
+automatically, unless the variable `proteome_main_project` is set (and
+optionally `proteome_main_project_type`).
+
+Automatic discovery compares the current directory to the base dir variables
+described in [Project Base Dirs](#project-base-dirs) above and extracts name
+and type from the
+path.
+
+This information is then used by the [Config Plugin](#config) described below.
+
 # Plugins
 The elements of the `proteome_plugins` variable should denote a python module
 that contains a `Plugin` class inheriting the
@@ -115,6 +155,7 @@ Loads extra vim config from all runtimepaths based on the current project's
 parameters, to run project type specific global configuration.
 The location of the loaded files is every runtimepath directory's subdirectories
 `project` and `project_after` (e.g. `~/.config/nvim/project_after`).
+This is overridable via `g:proteome_config_project{,_after}_dir`.
 
 For a project
 named `mysite` with the main type `rails` and additional type `ruby`, the order
@@ -125,11 +166,7 @@ is:
 * `project/rails/mysite.vim`
 * `project/all/*.vim`
 
-and shortly after that, the same paths under `project_after`.
-
-At the moment, the `after` files are called one second later, but this may be
-replaced by a better method later. The reason why this isn't done at the
-regular `plugin/` sourcing time is that remote plugins are initialized late.
+and in the *after* phase, the same paths under `project_after`.
 
 ## Ctags
 
