@@ -3,9 +3,6 @@ instance, allowing to change the current working directory according to a
 defined set of projects, and providing additional functionality like project
 specific configuration, ctags handling and a git history.
 
-**Note**: the plugin heavily uses concurrency and isn't completely deadlock
-safe yet.
-
 # Setup
 This repository is only a neovim remote plugin wrapper for the python
 project containing the main code, which must be installed on your pythonpath:
