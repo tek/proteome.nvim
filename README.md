@@ -65,9 +65,9 @@ If you have a 'save all' mapping, you should combine it with this.
 #### Examples
 `ProAdd python/proteome`
 
-Tries to look up the project `proteome` of type `python`, first in the json
-config, then the [type indexed base dirs](#type-indexed) and finally the
-[explicitly typed dirs](#explicitly-typed).
+Tries to look up the project `proteome` of type `python`, first in the [json
+config](#json-config), then the [type indexed base dirs](#type-indexed) and
+finally the [explicitly typed dirs](#explicitly-typed).
 
 `ProAdd rails/mysite { "root": "/projects/mysite", "types": ["jade", "ruby"] }`
 
