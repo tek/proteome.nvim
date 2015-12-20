@@ -181,7 +181,7 @@ let g:proteome_history_base = '~/tmp/nvim_history'
 Creates bare git repositories for each project at
 `{g:proteome_history_base}/type__name`, where a snapshot of the current project
 state is commited every time `ProSave` is executed.
-This provides a separate persistant undo history with git comfort without using
+This provides a separate persistent undo history with git comfort without using
 the project's regular git repository.
 
 ## License
