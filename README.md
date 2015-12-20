@@ -30,10 +30,10 @@ The regular initialization flow is:
 
 * Proteome starts during the `after/plugin/` vim phase.
 
-* The main project is determined (see [Main Project](#main-project)).
+* The [main project](#main-project) is determined.
 
-* Based on the result of that, project specific config is loaded (see [Config
-  Plugin](#config)). This is where additional projects should be added.
+* Based on the result of that, [project specific vim config](#config) is
+  loaded.  This is where dependency projects should be added.
 
 * The project specific config is applied and the initial state is created.
 
@@ -66,13 +66,13 @@ If you have a 'save all' mapping, you should combine it with this.
 `ProAdd python/proteome`
 
 Tries to look up the project `proteome` of type `python`, first in the json
-config, then the type indexed base dirs and finally the explicitly typed dirs
-(see next section).
+config, then the [type indexed base dirs](#type-indexed) and finally the
+[explicitly typed dirs](#explicitly-typed).
 
 `ProAdd rails/mysite { "root": "/projects/mysite", "types": ["jade", "ruby"] }`
 
 Adds the project `mysite` of type `rails`, if the root dir exists, with
-additional project types `jade` and `ruby` (see the `config` plugin).
+additional project types `jade` and `ruby` (see [Config plugin](#config)).
 
 # Configuration
 General config options that should be set:
