@@ -184,6 +184,11 @@ state is commited every time `ProSave` is executed.
 This provides a separate persistent undo history with git comfort without using
 the project's regular git repository.
 
+Only projects with the config attribute `"history": true` are considered. If
+all projects should get a history, `let g:proteome_all_projects_history = 1`.
+In the latter case, projects that don't have a type (like the fallback project
+used for any dir) are excluded unless explicitly allowed.
+
 ## License
 
 Copyright (c) Torsten Schmits. Distributed under the terms of the [MIT License][4].
