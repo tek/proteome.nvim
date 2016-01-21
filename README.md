@@ -189,6 +189,19 @@ all projects should get a history, `let g:proteome_all_projects_history = 1`.
 In the latter case, projects that don't have a type (like the fallback project
 used for any dir) are excluded unless explicitly allowed.
 
+Several commands for examining the history and checking out previous states are
+provided:
+
+`ProHistoryPrev` and `ProHistoryNext` check out the current project's parent
+and child commits. Currently, only the whole project can be checked out, but
+this will be provided for single files later.
+
+`ProHistoryBrowse` loads a scratch buffer in a new tab and fills it with the
+history, displaying the diff of the currently selected commit.
+`j` and `k` are mapped to cycling up and down. Pressing `<cr>` checks out the
+currently displayed commit.
+This is pretty preliminary, more features should be supplied soon.
+
 ## License
 
 Copyright (c) Torsten Schmits. Distributed under the terms of the [MIT License][4].
