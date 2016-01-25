@@ -11,6 +11,9 @@ project containing the main code, which must be installed on your pythonpath:
 pip install proteome
 ```
 
+To install, you will need to have the newest version of `libgit2` installed in
+your system.
+
 Python 3.5.1 is required to run the plugin. After installation, regularly
 install the nvim plugin and execute `:UpdateRemotePlugins`.
 
@@ -184,6 +187,9 @@ state is commited every time `ProSave` is executed.
 This provides a separate persistent undo history with git comfort without using
 the project's regular git repository.
 
+**Note**: This feature is pretty experimental, so don't be surprised if some
+actions fail, especially the *pick* feature.
+
 Only projects with the config attribute `"history": true` are considered. If
 all projects should get a history, `let g:proteome_all_projects_history = 1`.
 In the latter case, projects that don't have a type (like the fallback project
@@ -200,6 +206,10 @@ this will be provided for single files later.
 history, displaying the diff of the currently selected commit.
 `j` and `k` are mapped to cycling up and down. Pressing `<cr>` checks out the
 currently displayed commit.
+`p` and `r` both try to revert the selected commit only, using `patch` and `git
+revert` respectively. This can easily fail though, if the patch can't be
+applied to the current working tree.
+
 This is pretty preliminary, more features should be supplied soon.
 
 ## License
