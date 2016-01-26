@@ -11,8 +11,8 @@ project containing the main code, which must be installed on your pythonpath:
 pip install proteome
 ```
 
-To install, you will need to have the newest version of `libgit2` installed in
-your system.
+**Note**: You need to have the newest version of `libgit2` installed in
+your system before running the above command.
 
 Python 3.5.1 is required to run the plugin. After installation, regularly
 install the nvim plugin and execute `:UpdateRemotePlugins`.
@@ -63,13 +63,17 @@ If you have a 'save all' mapping, you should combine it with this.
 `ProTo` activates a project, either by index or by name.
 
 #### Examples
-`ProAdd python/proteome`
+```
+ProAdd python/proteome
+```
 
 Tries to look up the project `proteome` of type `python`, first in the [json
 config](#json-config), then the [type indexed base dirs](#type-indexed) and
 finally the [explicitly typed dirs](#explicitly-typed).
 
-`ProAdd rails/mysite { "root": "/projects/mysite", "types": ["jade", "ruby"] }`
+```
+ProAdd rails/mysite { "root": "/projects/mysite", "types": ["jade", "ruby"] }
+```
 
 Adds the project `mysite` of type `rails`, if the root dir exists, with
 additional project types `jade` and `ruby` (see [Config plugin](#config)).
