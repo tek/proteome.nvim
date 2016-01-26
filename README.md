@@ -131,7 +131,7 @@ The config file format is a list of json objects like so:
 ```
 
 ### Main Project
-During startup, the principal project that's being worked is determined
+During startup, the principal project that's being worked on is determined
 automatically, unless the variable `proteome_main_project` is set (and
 optionally `proteome_main_project_type`).
 
@@ -143,11 +143,11 @@ path.
 This information is then used by the [Config Plugin](#config) described below.
 
 # Plugins
+
 The elements of the `proteome_plugins` variable should denote a python module
 that contains a `Plugin` class inheriting the
 `proteome.state.ProteomeComponent` class.
 There are three plugins present in the project:
-
 
 ## Config
 
