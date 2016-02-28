@@ -1,3 +1,7 @@
+## 5.3.0 ##
+Allow specifying only the project name to `ProAdd`, defaulting to the main
+project's type
+
 ## 5.2.0 ##
 Added completion for `ProTo`, `ProAdd` and `ProRemove`
 ## 5.0.0 ##
