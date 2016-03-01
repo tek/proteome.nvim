@@ -87,6 +87,12 @@ ProAdd rails/mysite { "root": "/projects/mysite", "types": ["jade", "ruby"] }
 Adds the project `mysite` of type `rails`, if the root dir exists, with
 additional project types `jade` and `ruby` (see [Config plugin](#config)).
 
+```
+ProAdd neovim
+```
+Tries to look up `neovim` as project name in the json config, then uses the
+main project type to search in type dirs like in the first example.
+
 # Configuration
 General config options that should be set:
 
@@ -150,10 +156,12 @@ optionally `proteome_main_project_type`).
 
 Automatic discovery compares the current directory to the base dir variables
 described in [Project Base Dirs](#project-base-dirs) above and extracts name
-and type from the
-path.
+and type from the path.
 
 This information is then used by the [Config Plugin](#config) described below.
+
+If only a name is specified to `ProAdd`, the main project's type is used as
+fallback.
 
 # Plugins
 
