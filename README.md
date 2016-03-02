@@ -73,6 +73,9 @@ If you have a 'save all' mapping, you should combine it with this.
 
 `ProTo` activates a project, either by index or by name.
 
+`ProClone` fetches a git repository into a base dir, using the main type, and
+adds it as if `ProAdd` was executed.
+
 #### Examples
 ```
 ProAdd python/proteome
