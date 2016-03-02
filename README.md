@@ -1,3 +1,5 @@
+[![Join the chat at https://gitter.im/tek/proteome.nvim](https://badges.gitter.im/tek/proteome.nvim.svg)](https://gitter.im/tek/proteome.nvim?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This plugin assists in working on multiple projects in a single neovim
 instance, allowing to change the current working directory according to a
 defined set of projects, and providing additional functionality like project
@@ -240,6 +242,6 @@ This is pretty preliminary, more features should be supplied soon.
 
 ## License
 
-Copyright (c) Torsten Schmits. Distributed under the terms of the [MIT License][4].
+Copyright (c) Torsten Schmits. Distributed under the terms of the [MIT License][1].
 
-[4]: http://opensource.org/licenses/MIT 'mit license'
+[1]: http://opensource.org/licenses/MIT 'mit license'
