@@ -17,14 +17,16 @@ If your system doesn't have bleeding edge package management, you'll also have
 to adapt the version of `pygit2` to the libgit2 version (before installing
 `proteome`).
 
+**Note**: Python 3.5.1 is required to run the plugin.
+
 For example, on Ubuntu Wily, working packages are:
 ```
 apt-get install libgit2-22
 pip install 'pygit2==0.22.*'
 ```
 
-Python 3.5.1 is required to run the plugin. After installation, regularly
-install the nvim plugin and execute `:UpdateRemotePlugins`.
+After installation, regularly install the nvim plugin and execute
+`:UpdateRemotePlugins`.
 
 # General functionality
 The core concept is the management of the current project, its dependencies on
