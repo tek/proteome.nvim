@@ -100,6 +100,13 @@ ProAdd neovim
 Tries to look up `neovim` as project name in the json config, then uses the
 main project type to search in type dirs like in the first example.
 
+```
+ProClone neovim/neovim
+```
+Clones the github repo for neovim into the first directory in
+`g:proteome_base_dirs` using the main project's type as subdir.
+If cloning was successful, add the new project and activate it.
+
 # Configuration
 General config options that should be set:
 
