@@ -4,6 +4,8 @@ defined set of projects, and providing additional functionality like project
 specific configuration, ctags handling and a git history.
 
 # Setup
+
+[![Join the chat at https://gitter.im/tek/proteome.nvim](https://badges.gitter.im/tek/proteome.nvim.svg)](https://gitter.im/tek/proteome.nvim?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 This repository is only a neovim remote plugin wrapper for the python
 project containing the main code, which must be installed on your pythonpath:
 
