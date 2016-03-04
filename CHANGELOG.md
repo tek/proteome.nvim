@@ -1,3 +1,6 @@
+## 6.0.0 ##
+Unite source and kind for addable projects
+
 ## 5.3.0 ##
 Add `ProClone` command that creates a new project from a git repo
 

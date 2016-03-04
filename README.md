@@ -78,6 +78,11 @@ If you have a 'save all' mapping, you should combine it with this.
 `ProClone` fetches a git repository into a base dir, using the main type, and
 adds it as if `ProAdd` was executed.
 
+`ProSelectAdd` runs a fuzzy selection tool (currently [Unite][2]) for addable
+projects of the main type.
+
+`ProSelectAddAll` runs Unite with projects from all types.
+
 #### Examples
 ```
 ProAdd python/proteome
@@ -111,13 +116,16 @@ If cloning was successful, add the new project and activate it.
 General config options that should be set:
 
 ### Plugins
-By default, only the features described above are available. By defining this variable, additional (including custom) plugins can be activated.
+By default, only basic features for managing the working dir are available.
+By defining this variable, additional (including custom) plugins can be
+activated.
 
 ```viml
 let g:proteome_plugins = [
       \ 'proteome.plugins.ctags',
       \ 'proteome.plugins.history',
       \ 'proteome.plugins.config',
+      \ 'proteome.plugins.unite',
       \ ]
 ```
 
@@ -245,10 +253,14 @@ currently displayed commit.
 revert` respectively. This can easily fail though, if the patch can't be
 applied to the current working tree.
 
-This is pretty preliminary, more features should be supplied soon.
+## Unite
+
+The [two commands](#commands) for project adding described before are the only
+currently implemented features. More soon!
 
 ## License
 
 Copyright (c) Torsten Schmits. Distributed under the terms of the [MIT License][1].
 
 [1]: http://opensource.org/licenses/MIT 'mit license'
+[2]: https://github.com/Shougo/unite.vim 'unite repo'
