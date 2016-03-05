@@ -83,6 +83,9 @@ projects of the main type.
 
 `ProSelectAddAll` runs Unite with projects from all types.
 
+`Projects` runs Unite with all currently added projects. Two actions are
+available – `activate` and `remove`, defaulting on the former.
+
 #### Examples
 ```
 ProAdd python/proteome
