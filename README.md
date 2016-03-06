@@ -258,8 +258,8 @@ applied to the current working tree.
 
 ## Unite
 
-The [two commands](#commands) for project adding described before are the only
-currently implemented features. More soon!
+The [three commands](#commands) described before can be called with arguments
+that are passed to the unite command, like `-start-insert`.
 
 ## License
 
