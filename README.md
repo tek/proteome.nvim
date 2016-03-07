@@ -13,19 +13,7 @@ project containing the main code, which must be installed on your pythonpath:
 pip install proteome
 ```
 
-**Note**: You need to have the newest version of `libgit2` installed in
-your system before running the above command.
-If your system doesn't have bleeding edge package management, you'll also have
-to adapt the version of `pygit2` to the libgit2 version (before installing
-`proteome`).
-
 **Note**: Python 3.5.1 is required to run the plugin.
-
-For example, on Ubuntu Wily, working packages are:
-```
-apt-get install libgit2-22
-pip install 'pygit2==0.22.*'
-```
 
 After installation, regularly install the nvim plugin and execute
 `:UpdateRemotePlugins`.

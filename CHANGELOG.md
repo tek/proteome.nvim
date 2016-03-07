@@ -1,3 +1,6 @@
+## 6.3.0 ##
+remove `libgit2` dependency
+
 ## 6.0.0 ##
 Unite sources and kinds for addable projects and current projects
 
