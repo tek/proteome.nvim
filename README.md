@@ -243,6 +243,7 @@ currently displayed commit.
 `p` and `r` both try to revert the selected commit only, using `patch` and `git
 revert` respectively. This can easily fail though, if the patch can't be
 applied to the current working tree.
+`q` closes the tab.
 
 ## Unite
 
