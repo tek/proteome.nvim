@@ -1,3 +1,7 @@
+## 7.1.0 ##
+rename `:Projects` action `remove` to `delete` to match the native action, now
+the `d` mapping works out of the box
+
 ## 6.3.0 ##
 remove `libgit2` dependency
 
