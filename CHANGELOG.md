@@ -1,3 +1,6 @@
+## 7.2.0 ##
+Add `ProHistoryFileBrowse` that shows only diffs for the current file
+
 ## 7.1.0 ##
 rename `:Projects` action `remove` to `delete` to match the native action, now
 the `d` mapping works out of the box

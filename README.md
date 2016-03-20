@@ -245,6 +245,11 @@ revert` respectively. This can easily fail though, if the patch can't be
 applied to the current working tree.
 `q` closes the tab.
 
+`ProHistoryFileBrowse` is a variant of the above that operates on a single
+file, either the current buffer's or the specified argument, if any.
+Only diffs for that file are shown, and when selecting a commit, only a
+checkout of the file from that commit is done, followed by a new commit.
+
 ## Unite
 
 The [three commands](#commands) described before can be called with arguments
