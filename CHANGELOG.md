@@ -1,3 +1,6 @@
+## 7.4.0 ##
+Made Unite actions `add` and `delete` suitable for multiple selection
+
 ## 7.2.0 ##
 Add `ProHistoryFileBrowse` that shows only diffs for the current file
 
@@ -11,7 +14,7 @@ remove `libgit2` dependency
 ## 6.0.0 ##
 Unite sources and kinds for addable projects and current projects
 
-## 5.3.0 ##
+## 5.4.0 ##
 Add `ProClone` command that creates a new project from a git repo
 
 ## 5.3.0 ##
