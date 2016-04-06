@@ -181,7 +181,7 @@ fallback.
 The elements of the `proteome_plugins` variable should denote a python module
 that contains a `Plugin` class inheriting the
 `proteome.state.ProteomeComponent` class.
-There are three plugins present in the project:
+There are four built-in plugins in proteome:
 
 ## Config
 
