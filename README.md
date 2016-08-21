@@ -7,7 +7,8 @@ specific configuration, ctags handling and a git history.
 
 # Setup
 This repository is only a neovim remote plugin wrapper for the python
-project containing the main code, which must be installed on your pythonpath:
+project containing the [main code][core], which must be installed on your
+pythonpath:
 
 ```
 pip install proteome
@@ -66,7 +67,7 @@ If you have a 'save all' mapping, you should combine it with this.
 `ProClone` fetches a git repository into a base dir, using the main type, and
 adds it as if `ProAdd` was executed.
 
-`ProSelectAdd` runs a fuzzy selection tool (currently [Unite][2]) for addable
+`ProSelectAdd` runs a fuzzy selection tool (currently [Unite]) for addable
 projects of the main type.
 
 `ProSelectAddAll` runs Unite with projects from all types.
@@ -257,7 +258,9 @@ that are passed to the unite command, like `-start-insert`.
 
 ## License
 
-Copyright (c) Torsten Schmits. Distributed under the terms of the [MIT License][1].
+Copyright (c) Torsten Schmits.
+Distributed under the terms of the [MIT License].
 
-[1]: http://opensource.org/licenses/MIT 'mit license'
-[2]: https://github.com/Shougo/unite.vim 'unite repo'
+[MIT License]: http://opensource.org/licenses/MIT 'mit license'
+[Unite]: https://github.com/Shougo/unite.vim 'unite repo'
+[core]: https://github.com/tek/proteome 'proteome core'
