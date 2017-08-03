@@ -11,10 +11,10 @@ project containing the [main code][core], which must be installed on your
 pythonpath:
 
 ```
-pip install proteome
+pip3 install proteome
 ```
 
-**Note**: Python 3.5.1 is required to run the plugin.
+**Note**: Python 3.6 is required to run the plugin.
 
 After installation, regularly install the nvim plugin and execute
 `:UpdateRemotePlugins`.
